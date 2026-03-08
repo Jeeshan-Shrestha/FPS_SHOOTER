@@ -3,11 +3,14 @@ using UnityEngine;
 public class CollectableCubeScript : Interactable
 {
 
+    public PlayerHealthScripts playerHealthScripts;
+
     public GameObject particle;
 
     protected override void Interact()
     {
         Destroy(gameObject);
-        Instantiate(particle,transform.position,Quaternion.identity);
+        playerHealthScripts.TakeDamage(10f);
+        
     }
 }
