@@ -7,7 +7,7 @@ public class GunInteract : Interactable
     protected override void Interact()
     {
         gameObject.transform.SetParent(cameraTransform);
-        gameObject.transform.localPosition = Vector3.zero;
+        gameObject.transform.localPosition = new Vector3(0,-0.786f,1.077f);
         gameObject.transform.localRotation = Quaternion.identity;
         Debug.Log("you have equipped the gun");
     }
