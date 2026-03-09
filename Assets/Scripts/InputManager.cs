@@ -31,6 +31,7 @@ public class InputManager : MonoBehaviour
         created it in the unity using input actions and then pass it as the 
         parameter of the processMovement method that moves our player
         */
+        
         playerMovement.ProcessMovement(inFoot.Movement.ReadValue<Vector2>());
         inFoot.Jump.performed += ctx => playerMovement.Jump();
         playerLook.ProcessLook(inFoot.Look.ReadValue<Vector2>());
@@ -43,7 +44,8 @@ public class InputManager : MonoBehaviour
 
     void OnDisable()
     {
-        inFoot.Disable();       
+        inFoot.Disable();      
     }
+
 
 }

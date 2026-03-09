@@ -7,7 +7,7 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController controller;
     private Vector3 playerVelocity;
     public float speed = 5.0f;
-    private float gravityScale = -9.8f;
+    public float gravityScale = -9.8f;
     public float jumpForce = 5.0f;
 
     private Boolean isGrounded;

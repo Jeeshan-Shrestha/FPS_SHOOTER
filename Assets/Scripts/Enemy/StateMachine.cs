@@ -1,0 +1,41 @@
+using UnityEngine;
+using UnityEngine.UIElements;
+
+public class StateMachine : MonoBehaviour
+{
+    public BaseState activeState;
+    public PatrolState patrolState;
+
+    public void Initialize()
+    {
+        // setup the defualt state
+        patrolState = new PatrolState();
+        ChangeState(patrolState);
+    }
+
+    void Update()
+    {
+        if (activeState != null)
+        {
+            activeState.Process();
+        }
+    }
+
+    public void ChangeState(BaseState newState)
+    {
+        if (activeState != null)
+        {
+            // perform the clean up
+            activeState.Exit();
+        }
+        activeState = newState;
+        if (activeState != null)
+        {
+            // setup new state
+            activeState.stateMachine = this;
+            activeState.enemy = GetComponent<Enemy>();
+            activeState.Enter();
+
+        }
+    }
+}
