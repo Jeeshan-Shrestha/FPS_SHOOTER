@@ -4,13 +4,11 @@ using UnityEngine.UIElements;
 public class StateMachine : MonoBehaviour
 {
     public BaseState activeState;
-    public PatrolState patrolState;
 
     public void Initialize()
     {
         // setup the defualt state
-        patrolState = new PatrolState();
-        ChangeState(patrolState);
+        ChangeState(new PatrolState());
     }
 
     void Update()
