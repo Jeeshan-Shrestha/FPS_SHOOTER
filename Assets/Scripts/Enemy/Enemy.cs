@@ -6,6 +6,8 @@ public class Enemy: MonoBehaviour
 {
     private StateMachine stateMachine;
     private NavMeshAgent agent;
+    public AudioSource gunShotSound;
+    public ParticleSystem muzzleFlash;
 
     public NavMeshAgent Agent {get => agent;}
 

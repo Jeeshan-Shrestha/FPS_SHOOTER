@@ -10,5 +10,12 @@ public class Bullet : MonoBehaviour
             hitTransfrom.GetComponent<PlayerHealthScripts>().TakeDamage(10);
         }
         Destroy(gameObject);
+
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Debug.Log("Hit Enemy");
+            hitTransfrom.GetComponent<EnemyHealthScript>().TakeDamage(10);
+        }
     }
+
 }

@@ -7,7 +7,7 @@ public class AttackState : BaseState
     private float losePlayerTimer;
     private float shotTimer;
 
-    public float bulletSpeed = 40;    
+    public float bulletSpeed = 200;    
     public override void Enter()
     {
     }
@@ -49,7 +49,9 @@ public class AttackState : BaseState
     {
         shotTimer = 0;
         Debug.Log("Shoot");
-
+        enemy.gunShotSound.Play();
+        enemy.muzzleFlash.Play();
+        
         // take the reference to the gun barrel
         Transform gunBarrel = enemy.gunBarrelTransform;
         // instantiate the bullet object at that position of gun barrel

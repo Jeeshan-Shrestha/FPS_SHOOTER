@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 
 public class PlayerHealthScripts : MonoBehaviour
@@ -19,11 +20,17 @@ public class PlayerHealthScripts : MonoBehaviour
     public float overlayDuration = 2f;
     private float durationTimer;
     public float fadeSpeed = 2f;
+    private AudioSource[] playerSounds;
+    private AudioSource healSound;
+    private AudioSource hurtSound;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         health = maxHealth;
+        playerSounds = GetComponents<AudioSource>();
+        healSound = playerSounds[1];
+        hurtSound = playerSounds[3];
     }
 
     // Update is called once per frame
@@ -51,6 +58,10 @@ public class PlayerHealthScripts : MonoBehaviour
                 tempAplha -= Time.deltaTime * fadeSpeed;
                 healOverlay.color = new Color(damageOverlay.color.r,damageOverlay.color.g,damageOverlay.color.b,tempAplha);
             }
+        }
+        if (health <= 0)
+        {
+            GameOver();
         }
         
     }
@@ -85,6 +96,11 @@ public class PlayerHealthScripts : MonoBehaviour
     public void TakeDamage(float damage)
     {
         health -= damage;
+        int random = Random.Range(1,4);
+        if (random == 2)
+        {
+            hurtSound.Play();
+        }
         lerpTime = 0f;
         damageOverlay.color = new Color(damageOverlay.color.r,damageOverlay.color.g,damageOverlay.color.b,0.2f);
         durationTimer = 0;
@@ -93,8 +109,14 @@ public class PlayerHealthScripts : MonoBehaviour
     public void HealHealth(float heal)
     {
         health += heal;
+        healSound.Play();
         lerpTime = 0f;
         durationTimer = 0;
         healOverlay.color = new Color(damageOverlay.color.r,damageOverlay.color.g,damageOverlay.color.b,0.3f);
+    }
+
+    public void GameOver()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
