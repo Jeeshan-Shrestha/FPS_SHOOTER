@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    void Start()
+    {
+        Destroy(gameObject,3f);
+    }
     public void OnCollisionEnter(Collision collision)
     {
         Transform hitTransfrom = collision.gameObject.transform;
@@ -16,6 +20,7 @@ public class Bullet : MonoBehaviour
             Debug.Log("Hit Enemy");
             hitTransfrom.GetComponent<EnemyHealthScript>().TakeDamage(10);
         }
+        Destroy(gameObject);
     }
 
 }

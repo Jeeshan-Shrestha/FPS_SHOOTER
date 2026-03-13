@@ -5,9 +5,12 @@ public class EnemyHealthScript: MonoBehaviour
     public float health = 100;
     public ParticleSystem bloodEffect;
 
+    public GameManager gameManager;
+
 
     void Start()
     {
+        gameManager = FindAnyObjectByType<GameManager>();
     }
 
     public void TakeDamage(float damage)
@@ -16,6 +19,7 @@ public class EnemyHealthScript: MonoBehaviour
         bloodEffect.Play();
         if (health <= 0)
         {
+            gameManager.score += 1000;
             Destroy(gameObject);
         }
     } 
