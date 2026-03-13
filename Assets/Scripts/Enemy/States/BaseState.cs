@@ -6,4 +6,5 @@ public abstract class BaseState
     public abstract void Enter();
     public abstract void Process();
     public abstract void Exit();
+
 }

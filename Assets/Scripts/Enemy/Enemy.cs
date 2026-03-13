@@ -32,6 +32,7 @@ public class Enemy: MonoBehaviour
         stateMachine = GetComponent<StateMachine>();
         stateMachine.Initialize();
         player = GameObject.FindGameObjectWithTag("Player");
+        gunShotSound = GetComponent<AudioSource>();
     }
 
     void Update()

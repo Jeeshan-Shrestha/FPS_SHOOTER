@@ -5,8 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class PlayerHealthScripts : MonoBehaviour
 {
-
-    private float health;
+    public GameManager gameManager;
+    public float health;
     private float lerpTime;
     public float maxHealth = 100f;
 
@@ -61,7 +61,7 @@ public class PlayerHealthScripts : MonoBehaviour
         }
         if (health <= 0)
         {
-            GameOver();
+            gameManager.GameOver();
         }
         
     }
@@ -115,8 +115,5 @@ public class PlayerHealthScripts : MonoBehaviour
         healOverlay.color = new Color(damageOverlay.color.r,damageOverlay.color.g,damageOverlay.color.b,0.3f);
     }
 
-    public void GameOver()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
+    
 }

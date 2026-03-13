@@ -5,7 +5,7 @@ public class PlayerLook : MonoBehaviour
 
     private Camera camera;
     private float xRotation = 0.0f;
-    private float xSensitivity = 20.0f;
+    private float xSensitivity = 10.0f;
     private float ySensitivity = 20.0f;
 
     void Start()

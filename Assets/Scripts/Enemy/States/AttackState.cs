@@ -7,7 +7,7 @@ public class AttackState : BaseState
     private float losePlayerTimer;
     private float shotTimer;
 
-    public float bulletSpeed = 200;    
+    private float bulletSpeed = 150f;    
     public override void Enter()
     {
     }
@@ -55,9 +55,9 @@ public class AttackState : BaseState
         // take the reference to the gun barrel
         Transform gunBarrel = enemy.gunBarrelTransform;
         // instantiate the bullet object at that position of gun barrel
-        GameObject bullet = GameObject.Instantiate(Resources.Load("prefabs/Bullet") as GameObject,gunBarrel.position,enemy.transform.rotation);
-        // calculate the direction of the bullet to that of the player
         Vector3 shootDir = (enemy.Player.transform.position - gunBarrel.transform.position).normalized;
+        GameObject bullet = GameObject.Instantiate(Resources.Load("prefabs/Bullet") as GameObject,gunBarrel.position,Quaternion.LookRotation(shootDir));
+        // calculate the direction of the bullet to that of the player
         // add force to the bullet 
         bullet.GetComponent<Rigidbody>().linearVelocity = shootDir * bulletSpeed;
     }
