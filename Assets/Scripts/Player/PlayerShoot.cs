@@ -25,7 +25,11 @@ public class PlayerShoot : MonoBehaviour
     public TextMeshProUGUI reloadText;
     public ParticleSystem muzzleFlash;
 
-    private PlayerLook playerLook; // reference to PlayerLook for recoil
+    [Header("Scope UI")]
+    public GameObject scopeOverlay;    // assign a full-screen scope UI image in Inspector
+    public GameObject crosshairUI;     // assign your crosshair UI object in Inspector
+
+    private PlayerLook playerLook;
 
     void Start()
     {
@@ -33,7 +37,10 @@ public class PlayerShoot : MonoBehaviour
         playerSounds = GetComponents<AudioSource>();
         gunShotSound = playerSounds[0];
         reloadSound = playerSounds[2];
-        playerLook = GetComponentInParent<PlayerLook>(); // get PlayerLook from parent
+        playerLook = GetComponentInParent<PlayerLook>();
+
+        if (scopeOverlay) scopeOverlay.SetActive(false);
+        if (crosshairUI) crosshairUI.SetActive(true);
     }
 
     void Update()
@@ -42,6 +49,10 @@ public class PlayerShoot : MonoBehaviour
         ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
 
         shotTimer += Time.deltaTime;
+
+        // Sync scope UI
+        if (scopeOverlay) scopeOverlay.SetActive(playerLook.isScoped);
+        if (crosshairUI) crosshairUI.SetActive(!playerLook.isScoped);
 
         if (Input.GetMouseButton(0) && shotTimer > fireRate && ammoCounter > 0 && !isReloading)
             Shoot();
@@ -77,7 +88,7 @@ public class PlayerShoot : MonoBehaviour
         shotTimer = 0;
         gunShotSound.Play();
         muzzleFlash.Play();
-        playerLook.AddRecoil(); // trigger recoil on PlayerLook
+        playerLook.AddRecoil();
 
         Vector3 shootDir = (targetPoint - playerGunBarrelTransform.position).normalized;
         GameObject bullet = Instantiate(

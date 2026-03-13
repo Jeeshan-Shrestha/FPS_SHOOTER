@@ -27,10 +27,13 @@ public class GameManager : MonoBehaviour
     private float enemySpawnCooldown = 10f;
     private float enemySpawnTimer;
 
+    public GameObject gameOverUI;
 
+    public bool isCursorVisible = false;
 
     void Start()
     {
+        Time.timeScale = 1f;
         StartCoroutine(BuildNavMeshAndReady());
     }
 
@@ -71,11 +74,28 @@ public class GameManager : MonoBehaviour
         timerSecond += Time.deltaTime;
         timerText.text = "Time: " + timerMinute.ToString() + ":" + ((int)timerSecond).ToString();
         scoreText.text = "Score: " + ((int)score).ToString();
+
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+    {
+        isCursorVisible = !isCursorVisible;
+
+        Cursor.visible = isCursorVisible;
+
+        if (isCursorVisible)
+            Cursor.lockState = CursorLockMode.None;
+        else
+            Cursor.lockState = CursorLockMode.Locked;
+    }
     }
 
     public void GameOver()
     {
-        SceneManager.LoadScene(1);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        TextMeshProUGUI finalScore = gameOverUI.GetComponentInChildren<TextMeshProUGUI>();
+        finalScore.text = "Final Score: " + ((int)score).ToString();
+        gameOverUI.SetActive(true);
+        Time.timeScale = 0f;
     }
 
     public void SpawnEnemy()
