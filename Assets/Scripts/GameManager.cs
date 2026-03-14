@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
 
 
     [SerializeField] private GameObject enemyPrefab;
+    [SerializeField] private GameObject sniperEnemyPrefab;
     [SerializeField] private GameObject pathPrefab;
     [SerializeField] private NavMeshSurface navMeshSurface;
 
@@ -112,16 +113,19 @@ public class GameManager : MonoBehaviour
     public void SpawnEnemy()
     {
         enemySpawnTimer = 0;
-        enemySpawnCooldown -= 0.05f;
+        enemySpawnCooldown -= 0.1f;
         scoreMultiplier += 0.01f;
         if (enemySpawnCooldown <= 1)
-        {
             enemySpawnCooldown = 1;
-        }
+
         Vector3 spawnPos = GetRandomNavMeshPosition(mapCenter, 100f);
 
-        GameObject enemy = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
-        GameObject enemyPath = Instantiate(pathPrefab, spawnPos, Quaternion.identity); // path at origin, not same pos as enemy
+        // 20% chance to spawn sniper enemy
+        bool spawnSniper = sniperEnemyPrefab != null && Random.value < 0.2f;
+        GameObject prefabToSpawn = spawnSniper ? sniperEnemyPrefab : enemyPrefab;
+
+        GameObject enemy = Instantiate(prefabToSpawn, spawnPos, Quaternion.identity);
+        GameObject enemyPath = Instantiate(pathPrefab, spawnPos, Quaternion.identity);
 
         Enemy enemyScript = enemy.GetComponent<Enemy>();
         enemyScript.enemyPath = enemyPath.GetComponent<EnemyPath>();
