@@ -23,13 +23,12 @@ public class PlayerLook : MonoBehaviour
     public float recoilRecoverySpeed = 6f;
 
     [Header("Scope Settings")]
-    public float scopedFOV = 30f;
     public float normalFOV = 60f;
     public float scopeFOVSpeed = 10f;
     public Camera gunCamera;
     [HideInInspector] public bool isScoped = false;
 
-    private float targetFOV;
+    public float targetFOV;
 
     void Start()
     {
@@ -51,15 +50,16 @@ public class PlayerLook : MonoBehaviour
         baseSensitivity = value;
     }
 
+    public void ToggleScope(float fov)
+    {
+        isScoped = !isScoped;
+        targetFOV = isScoped ? fov : normalFOV;
+        if (gunCamera != null)
+            gunCamera.enabled = !isScoped;
+    }
+
     void Update()
     {
-        if (Input.GetMouseButtonDown(1))
-        {
-            isScoped = !isScoped;
-            targetFOV = isScoped ? scopedFOV : normalFOV;
-            if (gunCamera != null)
-                gunCamera.enabled = !isScoped;
-        }
 
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFOV, scopeFOVSpeed * Time.deltaTime);
 

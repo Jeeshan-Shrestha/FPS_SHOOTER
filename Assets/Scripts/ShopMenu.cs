@@ -4,6 +4,8 @@ public class ShopMenu : MonoBehaviour
 {
    public GameObject panel;
     public bool isPanelOpen = false;
+
+    public GameManager gameManager;
     
     public void OpenMenu()
     {
@@ -14,5 +16,10 @@ public class ShopMenu : MonoBehaviour
     {
         isPanelOpen = false;
         panel.SetActive(false);
+    }
+
+    public void BuyItem()
+    {
+        
     }
 }

@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class EnemyHealthScript: MonoBehaviour
@@ -6,6 +7,7 @@ public class EnemyHealthScript: MonoBehaviour
     public ParticleSystem bloodEffect;
 
     public GameManager gameManager;
+
 
 
     void Start()
@@ -20,6 +22,7 @@ public class EnemyHealthScript: MonoBehaviour
         if (health <= 0)
         {
             gameManager.score += 1000;
+            gameManager.killCount += 1;
             Destroy(gameObject);
         }
     } 

@@ -35,7 +35,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private SettingsMenu settingsMenu;
     [SerializeField] private ShopMenu shopMenu;
 
-
+    public int killCount = 0;
+    public TextMeshProUGUI killCountText;
+    public TextMeshProUGUI finalKillCount;
 
     void Start()
     {
@@ -92,6 +94,8 @@ public class GameManager : MonoBehaviour
         else
             Cursor.lockState = CursorLockMode.Locked;
     }
+
+        killCountText.text = "Kills: " + killCount.ToString();
     }
 
     public void GameOver()
@@ -100,6 +104,7 @@ public class GameManager : MonoBehaviour
         Cursor.visible = true;
         TextMeshProUGUI finalScore = gameOverUI.GetComponentInChildren<TextMeshProUGUI>();
         finalScore.text = "Final Score: " + ((int)score).ToString();
+        finalKillCount.text = "Kills: " + killCount.ToString();
         gameOverUI.SetActive(true);
         Time.timeScale = 0f;
     }

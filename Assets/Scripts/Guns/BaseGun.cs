@@ -2,6 +2,7 @@ using UnityEngine;
 
 public abstract class BaseGun : MonoBehaviour
 {
+    public string gunName;
     public float fireRate;
     public int maxAmmo;
     public float ReloadTimer;
@@ -9,4 +10,6 @@ public abstract class BaseGun : MonoBehaviour
     public AudioSource reloadSound;
     public Transform gunBarrelPos;
     public GameObject scopeOverlay;
+    public float gunDamage;
+    public float scopedFOV = 30f;
 }
