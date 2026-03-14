@@ -4,19 +4,11 @@ using UnityEngine;
 public class PlayerShoot : MonoBehaviour
 {
     private float shotTimer;
-
-    [Range(0.1f, 2)]
-    public float fireRate;
-
-    public Transform playerGunBarrelTransform;
     private Ray ray;
     public float bulletVelocity = 200;
-    private AudioSource[] playerSounds;
-    private AudioSource gunShotSound;
-    private AudioSource reloadSound;
 
     public int ammoCounter;
-    public int gunAmmo = 30;
+    public BaseGun gun;
     private bool isReloading;
 
     public float reloadCooldownCounter;
@@ -26,35 +18,35 @@ public class PlayerShoot : MonoBehaviour
     public ParticleSystem muzzleFlash;
 
     [Header("Scope UI")]
-    public GameObject scopeOverlay;    // assign a full-screen scope UI image in Inspector
+        // assign a full-screen scope UI image in Inspector
     public GameObject crosshairUI;     // assign your crosshair UI object in Inspector
 
     private PlayerLook playerLook;
 
+    public SettingsMenu settingsMenu;
+
     void Start()
     {
-        ammoCounter = gunAmmo;
-        playerSounds = GetComponents<AudioSource>();
-        gunShotSound = playerSounds[0];
-        reloadSound = playerSounds[2];
+        gun = GetComponentInChildren<BaseGun>();
+        ammoCounter = gun.maxAmmo;
         playerLook = GetComponentInParent<PlayerLook>();
 
-        if (scopeOverlay) scopeOverlay.SetActive(false);
+        if (gun.scopeOverlay) gun.scopeOverlay.SetActive(false);
         if (crosshairUI) crosshairUI.SetActive(true);
     }
 
     void Update()
     {
-        reloadText.text = "Ammo: " + ammoCounter.ToString() + "/" + gunAmmo.ToString();
+        reloadText.text = "Ammo: " + ammoCounter.ToString() + "/" + gun.maxAmmo.ToString();
         ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
 
         shotTimer += Time.deltaTime;
 
         // Sync scope UI
-        if (scopeOverlay) scopeOverlay.SetActive(playerLook.isScoped);
+        if (gun.scopeOverlay) gun.scopeOverlay.SetActive(playerLook.isScoped);
         if (crosshairUI) crosshairUI.SetActive(!playerLook.isScoped);
 
-        if (Input.GetMouseButton(0) && shotTimer > fireRate && ammoCounter > 0 && !isReloading)
+        if (Input.GetMouseButton(0) && shotTimer > gun.fireRate && ammoCounter > 0 && !isReloading && !settingsMenu.isPanelOpen)
             Shoot();
 
         if (ammoCounter <= 0 && !isReloading)
@@ -69,7 +61,7 @@ public class PlayerShoot : MonoBehaviour
         if (reloadCooldownCounter > reloadTime)
         {
             isReloading = false;
-            ammoCounter = gunAmmo;
+            ammoCounter = gun.maxAmmo;
             reloadCooldownCounter = 0;
         }
     }
@@ -86,14 +78,14 @@ public class PlayerShoot : MonoBehaviour
 
         ammoCounter -= 1;
         shotTimer = 0;
-        gunShotSound.Play();
+        gun.gunShotSound.Play();
         muzzleFlash.Play();
         playerLook.AddRecoil();
 
-        Vector3 shootDir = (targetPoint - playerGunBarrelTransform.position).normalized;
+        Vector3 shootDir = (targetPoint - gun.gunBarrelPos.position).normalized;
         GameObject bullet = Instantiate(
             Resources.Load("prefabs/Bullet") as GameObject,
-            playerGunBarrelTransform.position,
+            gun.gunBarrelPos.position,
             Quaternion.LookRotation(shootDir) * Quaternion.Euler(90, 0, 0)
         );
         bullet.GetComponent<Rigidbody>().linearVelocity = shootDir * bulletVelocity;
@@ -102,6 +94,6 @@ public class PlayerShoot : MonoBehaviour
     public void ReloadGun()
     {
         isReloading = true;
-        reloadSound.Play();
+        gun.reloadSound.Play();
     }
 }

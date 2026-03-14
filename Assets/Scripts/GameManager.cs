@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -30,6 +31,11 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverUI;
 
     public bool isCursorVisible = false;
+
+    [SerializeField] private SettingsMenu settingsMenu;
+    [SerializeField] private ShopMenu shopMenu;
+
+
 
     void Start()
     {

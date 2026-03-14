@@ -1,11 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerLook : MonoBehaviour
 {
     private Camera cam;
     private float xRotation = 0.0f;
-    private float xSensitivity = 10.0f;
-    private float ySensitivity = 20.0f;
+
+    [Header("Sensitivity Settings")]
+    public float xSensitivity = 10.0f;
+    public float ySensitivity = 20.0f;
+    public Slider sensitivitySlider;
+    private float baseSensitivity = 1f;
 
     private float recoilX;
     private float recoilY;
@@ -21,6 +26,7 @@ public class PlayerLook : MonoBehaviour
     public float scopedFOV = 30f;
     public float normalFOV = 60f;
     public float scopeFOVSpeed = 10f;
+    public Camera gunCamera;
     [HideInInspector] public bool isScoped = false;
 
     private float targetFOV;
@@ -30,21 +36,33 @@ public class PlayerLook : MonoBehaviour
         cam = GetComponentInChildren<Camera>();
         targetFOV = normalFOV;
         cam.fieldOfView = normalFOV;
+
+        if (sensitivitySlider != null)
+        {
+            sensitivitySlider.minValue = 0.1f;
+            sensitivitySlider.maxValue = 3f;
+            sensitivitySlider.value = baseSensitivity;
+            sensitivitySlider.onValueChanged.AddListener(OnSensitivityChanged);
+        }
+    }
+
+    private void OnSensitivityChanged(float value)
+    {
+        baseSensitivity = value;
     }
 
     void Update()
     {
-        // Scope toggle
         if (Input.GetMouseButtonDown(1))
         {
             isScoped = !isScoped;
             targetFOV = isScoped ? scopedFOV : normalFOV;
+            if (gunCamera != null)
+                gunCamera.enabled = !isScoped;
         }
 
-        // Smooth FOV transition
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFOV, scopeFOVSpeed * Time.deltaTime);
 
-        // Recoil (reduced while scoped)
         float recoilMult = isScoped ? 0.4f : 1f;
 
         currentRecoilX = Mathf.Lerp(currentRecoilX, recoilX, recoilRecoverySpeed * Time.deltaTime);
@@ -60,15 +78,11 @@ public class PlayerLook : MonoBehaviour
 
     public void ProcessLook(Vector2 input)
     {
-        // Sensitivity reduced while scoped
-        float sensMultiplier = isScoped ? 0.4f : 1f;
+        float sensMultiplier = (isScoped ? 0.4f : 1f) * baseSensitivity;
 
-        float mouseX = input.x;
-        float mouseY = input.y;
-
-        xRotation -= (mouseY * Time.deltaTime) * ySensitivity * sensMultiplier;
+        xRotation -= (input.y * Time.deltaTime) * ySensitivity * sensMultiplier;
         xRotation = Mathf.Clamp(xRotation, -80f, 80f);
-        transform.Rotate(Vector3.up * (mouseX * Time.deltaTime) * xSensitivity * sensMultiplier);
+        transform.Rotate(Vector3.up * (input.x * Time.deltaTime) * xSensitivity * sensMultiplier);
     }
 
     public void AddRecoil()

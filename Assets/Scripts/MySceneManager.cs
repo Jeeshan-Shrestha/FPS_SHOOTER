@@ -12,11 +12,16 @@ public class MySceneManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         Debug.Log("Enter the game");
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        SceneManager.LoadScene(1);
     }
     public void LeaveGame()
     {
         Debug.Log("Exited the game");
         Application.Quit();
+    }
+
+    public void ExitToMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }
