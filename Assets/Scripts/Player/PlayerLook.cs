@@ -110,7 +110,7 @@ public class PlayerLook : MonoBehaviour
     {
         if (gameManager.isCursorVisible) return;
 
-        float sensMultiplier = (isScoped ? 0.25f : 1f) * baseSensitivity;
+        float sensMultiplier = (isScoped ? 0.15f : 1f) * baseSensitivity;
 
         xRotation -= (input.y * Time.deltaTime) * ySensitivity * sensMultiplier;
         xRotation = Mathf.Clamp(xRotation, -80f, 80f);

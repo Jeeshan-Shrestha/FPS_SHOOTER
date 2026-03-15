@@ -12,4 +12,5 @@ public abstract class BaseGun : MonoBehaviour
     public GameObject scopeOverlay;
     public float gunDamage;
     public float scopedFOV = 30f;
+    public float bulletVelocity;
 }

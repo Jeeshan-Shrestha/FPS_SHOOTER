@@ -40,13 +40,14 @@ public class PlayerShoot : MonoBehaviour
     private GameManager gameManager;
 
     void Start()
-    {   
+    {
         gameManager = FindFirstObjectByType<GameManager>();
         bulletPrefab = Resources.Load("prefabs/Bullet") as GameObject;
         sniperBulletPrefab = Resources.Load("prefabs/SniperBullet") as GameObject;
         sniper.SetActive(false);
         assaultRifle.SetActive(true);
         gun = GetComponentInChildren<BaseGun>();
+        bulletVelocity = gun.bulletVelocity;
         ammoCounter = gun.maxAmmo;
         playerLook = GetComponentInParent<PlayerLook>();
 
@@ -160,7 +161,7 @@ public class PlayerShoot : MonoBehaviour
         gun = activate.GetComponent<BaseGun>();
         ammoCounter = gun.maxAmmo;
         muzzleFlash = gun.GetComponentInChildren<ParticleSystem>();
-
+        bulletVelocity = gun.bulletVelocity;
         
         if (playerLook.isScoped)
         {

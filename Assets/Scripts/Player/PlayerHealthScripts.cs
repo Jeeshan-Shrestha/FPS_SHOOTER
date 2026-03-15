@@ -35,15 +35,44 @@ public class PlayerHealthScripts : MonoBehaviour
     private AudioSource healSound;
     private AudioSource hurtSound;
 
-    void Start()
-    {
-        health = maxHealth;
-        stamina = maxStamina;
-        playerSounds = GetComponents<AudioSource>();
-        healSound = playerSounds[1];
-        hurtSound = playerSounds[3];
-    }
+    private Color defaultStaminaColor;
 
+void Start()
+{
+    health = maxHealth;
+    stamina = maxStamina;
+    playerSounds = GetComponents<AudioSource>();
+    healSound = playerSounds[1];
+    hurtSound = playerSounds[3];
+
+    // cache the color set in Inspector
+    if (foregroundStaminaBar != null)
+        defaultStaminaColor = foregroundStaminaBar.color;
+}
+
+void HandleStamina()
+{
+    isSprinting = Input.GetKey(KeyCode.LeftShift) && stamina > 0;
+
+    if (isSprinting)
+    {
+        stamina -= staminaDrainRate * Time.deltaTime;
+        staminaRegenTimer = 0f;
+
+        if (foregroundStaminaBar != null)
+            foregroundStaminaBar.color = stamina < 20f ? Color.red : defaultStaminaColor;
+    }
+    else
+    {
+        staminaRegenTimer += Time.deltaTime;
+        if (staminaRegenTimer >= staminaRegenDelay)
+            stamina += staminaRegenRate * Time.deltaTime;
+
+        // restore original Inspector color
+        if (foregroundStaminaBar != null)
+            foregroundStaminaBar.color = defaultStaminaColor;
+    }
+}
     void Update()
     {
         health = Mathf.Clamp(health, 0, maxHealth);
@@ -78,31 +107,6 @@ public class PlayerHealthScripts : MonoBehaviour
         if (health <= 0)
             gameManager.GameOver();
     }
-
-    void HandleStamina()
-    {
-        isSprinting = Input.GetKey(KeyCode.LeftShift) && stamina > 0;
-
-        if (isSprinting)
-        {
-            stamina -= staminaDrainRate * Time.deltaTime;
-            staminaRegenTimer = 0f;
-
-            // flash bar yellow when low
-            if (foregroundStaminaBar != null)
-                foregroundStaminaBar.color = stamina < 20f ? Color.yellow : Color.cyan;
-        }
-        else
-        {
-            staminaRegenTimer += Time.deltaTime;
-            if (staminaRegenTimer >= staminaRegenDelay)
-                stamina += staminaRegenRate * Time.deltaTime;
-
-            if (foregroundStaminaBar != null)
-                foregroundStaminaBar.color = Color.cyan;
-        }
-    }
-
     void UpdateStaminaUI()
     {
         if (backgroundStaminaBar == null || foregroundStaminaBar == null) return;
