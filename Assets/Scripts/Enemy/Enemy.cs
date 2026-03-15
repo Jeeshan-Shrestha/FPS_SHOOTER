@@ -9,6 +9,9 @@ public class Enemy : MonoBehaviour
     public AudioSource gunShotSound;
     public ParticleSystem muzzleFlash;
 
+    [Range(0f, 0.3f)]
+    public float bulletSpread = 0.05f;
+
     public NavMeshAgent Agent { get => agent; }
 
     [SerializeField]
@@ -28,13 +31,29 @@ public class Enemy : MonoBehaviour
 
     public GameObject bulletPrefab;
 
-    void Start()
+    public int maxAmmo = 10;
+    public float reloadTime = 2.5f;
+
+    private AudioSource[] sounds;
+    public AudioSource reloadSound;
+
+   void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         stateMachine = GetComponent<StateMachine>();
         stateMachine.Initialize();
         player = GameObject.FindGameObjectWithTag("Player");
-        gunShotSound = GetComponent<AudioSource>();
+
+        sounds = GetComponents<AudioSource>();
+
+        if (sounds.Length < 2)
+        {
+            Debug.LogError("Enemy needs at least 2 AudioSource components!");
+            return;
+        }
+
+        gunShotSound = sounds[0];
+        reloadSound = sounds[1];
     }
 
     void Update()
@@ -76,4 +95,5 @@ public class Enemy : MonoBehaviour
         }
         return false;
     }
+
 }

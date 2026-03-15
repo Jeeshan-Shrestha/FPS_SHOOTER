@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
 using System.Collections;
-using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -15,8 +14,6 @@ public class GameManager : MonoBehaviour
     public float score;
     private float scoreMultiplier = 5;
     public TextMeshProUGUI scoreText;
-
-
 
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private GameObject sniperEnemyPrefab;
@@ -30,7 +27,6 @@ public class GameManager : MonoBehaviour
     private float enemySpawnTimer;
 
     public GameObject gameOverUI;
-
     public bool isCursorVisible = false;
 
     [SerializeField] private SettingsMenu settingsMenu;
@@ -40,9 +36,16 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI killCountText;
     public TextMeshProUGUI finalKillCount;
 
+    private GameObject player;
+
+    [Header("Spawn Settings")]
+    public float minSpawnDistance = 50f;
+    public float maxSpawnDistance = 100f;
+
     void Start()
     {
         Time.timeScale = 1f;
+        player = GameObject.FindGameObjectWithTag("Player");
         StartCoroutine(BuildNavMeshAndReady());
     }
 
@@ -51,7 +54,6 @@ public class GameManager : MonoBehaviour
         navMeshSurface.BuildNavMesh();
         yield return new WaitForSeconds(0.5f);
 
-        // Automatically calculate real center from NavMesh
         NavMeshTriangulation tri = NavMesh.CalculateTriangulation();
         if (tri.vertices.Length > 0)
         {
@@ -72,9 +74,8 @@ public class GameManager : MonoBehaviour
         score += Time.deltaTime * scoreMultiplier;
         enemySpawnTimer += Time.deltaTime;
         if (enemySpawnTimer > enemySpawnCooldown && navMeshReady)
-        {
             SpawnEnemy();
-        }
+
         if (timerSecond > 60)
         {
             timerMinute += 1;
@@ -85,16 +86,11 @@ public class GameManager : MonoBehaviour
         scoreText.text = "Score: " + ((int)score).ToString();
 
         if (Input.GetKeyDown(KeyCode.LeftControl))
-    {
-        isCursorVisible = !isCursorVisible;
-
-        Cursor.visible = isCursorVisible;
-
-        if (isCursorVisible)
-            Cursor.lockState = CursorLockMode.None;
-        else
-            Cursor.lockState = CursorLockMode.Locked;
-    }
+        {
+            isCursorVisible = !isCursorVisible;
+            Cursor.visible = isCursorVisible;
+            Cursor.lockState = isCursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
+        }
 
         killCountText.text = "Kills: " + killCount.ToString();
     }
@@ -118,9 +114,9 @@ public class GameManager : MonoBehaviour
         if (enemySpawnCooldown <= 1)
             enemySpawnCooldown = 1;
 
-        Vector3 spawnPos = GetRandomNavMeshPosition(mapCenter, 100f);
+        Vector3 spawnPos = GetSpawnPositionNearPlayer();
+        if (spawnPos == Vector3.zero) return;
 
-        // 20% chance to spawn sniper enemy
         bool spawnSniper = sniperEnemyPrefab != null && Random.value < 0.2f;
         GameObject prefabToSpawn = spawnSniper ? sniperEnemyPrefab : enemyPrefab;
 
@@ -131,30 +127,54 @@ public class GameManager : MonoBehaviour
         enemyScript.enemyPath = enemyPath.GetComponent<EnemyPath>();
     }
 
-    public Vector3 GetRandomNavMeshPosition(Vector3 center, float range)
+    private Vector3 GetSpawnPositionNearPlayer()
     {
-        for (int i = 0; i < 30; i++)
+        if (player == null) return Vector3.zero;
+
+        Vector3 playerPos = player.transform.position;
+
+        for (int i = 0; i < 50; i++)
         {
-            Vector2 randomCircle = Random.insideUnitCircle * range;
-            Vector3 randomPos = new Vector3(
-                center.x + randomCircle.x,
-                center.y,
-                center.z + randomCircle.y
+            // pick a random angle and random distance between min and max
+            float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+            float distance = Random.Range(minSpawnDistance, maxSpawnDistance);
+
+            Vector3 candidatePos = new Vector3(
+                playerPos.x + Mathf.Cos(angle) * distance,
+                playerPos.y + 50f,
+                playerPos.z + Mathf.Sin(angle) * distance
             );
 
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(randomPos, out hit, 50f, NavMesh.AllAreas))
-            {
-                return hit.position;
-            }
+            // raycast down to find ground surface
+            RaycastHit groundHit;
+            if (!Physics.Raycast(candidatePos, Vector3.down, out groundHit, 200f))
+                continue;
+
+            Vector3 groundPos = groundHit.point + Vector3.up * 0.5f;
+
+            // skip if something is above — inside a building
+            if (Physics.Raycast(groundPos + Vector3.up * 0.1f, Vector3.up, 5f))
+                continue;
+
+            // verify it lands on navmesh
+            NavMeshHit navHit;
+            if (!NavMesh.SamplePosition(groundPos, out navHit, 3f, NavMesh.AllAreas))
+                continue;
+
+            // final distance check — make sure it's actually within range
+            float actualDistance = Vector3.Distance(navHit.position, playerPos);
+            if (actualDistance < minSpawnDistance || actualDistance > maxSpawnDistance)
+                continue;
+
+            return navHit.position + Vector3.up * 0.5f;
         }
 
-        // Fallback: return any valid NavMesh point
+        // fallback — spawn anywhere valid on navmesh near player
+        Debug.LogWarning("Could not find ideal spawn, using fallback");
         NavMeshHit fallback;
-        if (NavMesh.SamplePosition(center, out fallback, 500f, NavMesh.AllAreas))
-            return fallback.position;
+        if (NavMesh.SamplePosition(playerPos + Vector3.forward * minSpawnDistance, out fallback, 50f, NavMesh.AllAreas))
+            return fallback.position + Vector3.up * 0.5f;
 
-        Debug.LogError("No NavMesh found!");
-        return center;
+        return Vector3.zero;
     }
 }

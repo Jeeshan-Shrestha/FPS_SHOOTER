@@ -37,8 +37,11 @@ public class PlayerShoot : MonoBehaviour
 
     private GameObject bullet;
 
+    private GameManager gameManager;
+
     void Start()
     {   
+        gameManager = FindFirstObjectByType<GameManager>();
         bulletPrefab = Resources.Load("prefabs/Bullet") as GameObject;
         sniperBulletPrefab = Resources.Load("prefabs/SniperBullet") as GameObject;
         sniper.SetActive(false);
@@ -77,6 +80,7 @@ public class PlayerShoot : MonoBehaviour
         && !isReloading 
         && !settingsMenu.isPanelOpen
         && !shopMenu.isPanelOpen
+        && !gameManager.isCursorVisible
         )
             Shoot();
 

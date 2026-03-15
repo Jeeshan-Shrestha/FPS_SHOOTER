@@ -27,14 +27,19 @@ public class PlayerLook : MonoBehaviour
     public float scopeFOVSpeed = 10f;
     public Camera gunCamera;
     [HideInInspector] public bool isScoped = false;
+    [HideInInspector] public float targetFOV;
 
-    public float targetFOV;
+    [Header("UI")]
+    public GameObject settingsPanel;
+
+    private GameManager gameManager;
 
     void Start()
     {
         cam = GetComponentInChildren<Camera>();
         targetFOV = normalFOV;
         cam.fieldOfView = normalFOV;
+        gameManager = FindAnyObjectByType<GameManager>();
 
         if (sensitivitySlider != null)
         {
@@ -50,17 +55,8 @@ public class PlayerLook : MonoBehaviour
         baseSensitivity = value;
     }
 
-    public void ToggleScope(float fov)
-    {
-        isScoped = !isScoped;
-        targetFOV = isScoped ? fov : normalFOV;
-        if (gunCamera != null)
-            gunCamera.enabled = !isScoped;
-    }
-
     void Update()
     {
-
         cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFOV, scopeFOVSpeed * Time.deltaTime);
 
         float recoilMult = isScoped ? 0.4f : 1f;
@@ -76,8 +72,18 @@ public class PlayerLook : MonoBehaviour
         cam.transform.localRotation = Quaternion.Euler(totalX, currentRecoilY * recoilMult, 0);
     }
 
+    public void ToggleScope(float scopedFOV)
+    {
+        isScoped = !isScoped;
+        targetFOV = isScoped ? scopedFOV : normalFOV;
+        if (gunCamera != null)
+            gunCamera.enabled = !isScoped;
+    }
+
     public void ProcessLook(Vector2 input)
     {
+        if (gameManager.isCursorVisible) return;
+
         float sensMultiplier = (isScoped ? 0.4f : 1f) * baseSensitivity;
 
         xRotation -= (input.y * Time.deltaTime) * ySensitivity * sensMultiplier;
