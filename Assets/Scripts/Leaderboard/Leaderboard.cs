@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Dan.Main;
-using LootLocker.Extension.DataTypes;
-using NUnit.Framework;
 using TMPro;
 using UnityEngine;
 
@@ -40,20 +38,7 @@ public class Leaderboard : MonoBehaviour
         // fetch first to check existing score
         LeaderboardCreator.GetLeaderboard(publicKey, (msg) =>
         {
-            int existingScore = 0;
-
-            for (int i = 0; i < msg.Length; i++)
-            {
-                if (msg[i].Username == username)
-                {
-                    existingScore = msg[i].Score;
-                    break;
-                }
-            }
-
-            if (score > existingScore)
-            {
-                LeaderboardCreator.UploadNewEntry(publicKey, username, score, (success) =>
+            LeaderboardCreator.UploadNewEntry(publicKey, username, score, (success) =>
                 {
                     if (success)
                     {
@@ -63,17 +48,12 @@ public class Leaderboard : MonoBehaviour
                     else
                         statusText.text = "Upload failed";
                 });
-            }
-            else
-            {
-                statusText.text = "Less than previous kills";
-                GetLeaderboard();
-            }
         });
     }
 
     public void OpenLeaderboard()
     {
+        GetLeaderboard();
         leaderboardPanel.SetActive(true);
         gameManager.PauseGame();
     }

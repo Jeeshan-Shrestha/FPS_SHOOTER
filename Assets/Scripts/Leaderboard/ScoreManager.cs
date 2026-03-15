@@ -1,4 +1,3 @@
-using LootLocker.Extension.DataTypes;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
