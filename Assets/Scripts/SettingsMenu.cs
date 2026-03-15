@@ -5,7 +5,6 @@ public class SettingsMenu : MonoBehaviour
 {
     public GameObject panel;
     public bool isPanelOpen = false;
-    
     public void OpenMenu()
     {
         isPanelOpen = true;

@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/GameOverScene.unity
     guid: b78cbc27fb6845044bba48a63cdeb4f9
   - enabled: 1
+    path: Assets/Scenes/LoadingScreen.unity
+    guid: 3c580cb2e2da80f43b4aa1c01aebe16d
+  - enabled: 1
     path: Assets/Scenes/FloodedGround.unity
     guid: 416045d3ae786b040947717a6dafc57b
   m_configObjects:

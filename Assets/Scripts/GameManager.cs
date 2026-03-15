@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
 using System.Collections;
+using UnityEditor.Analytics;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,7 +19,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject enemyPrefab;
     [SerializeField] private GameObject sniperEnemyPrefab;
     [SerializeField] private GameObject pathPrefab;
-    [SerializeField] private NavMeshSurface navMeshSurface;
 
     private Vector3 mapCenter;
     private bool navMeshReady = false;
@@ -46,28 +46,9 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         player = GameObject.FindGameObjectWithTag("Player");
-        StartCoroutine(BuildNavMeshAndReady());
+        navMeshReady = true;
     }
 
-    private IEnumerator BuildNavMeshAndReady()
-    {
-        navMeshSurface.BuildNavMesh();
-        yield return new WaitForSeconds(0.5f);
-
-        NavMeshTriangulation tri = NavMesh.CalculateTriangulation();
-        if (tri.vertices.Length > 0)
-        {
-            Vector3 sum = Vector3.zero;
-            foreach (Vector3 v in tri.vertices) sum += v;
-            mapCenter = sum / tri.vertices.Length;
-            Debug.Log($"NavMesh ready! Center: {mapCenter}");
-            navMeshReady = true;
-        }
-        else
-        {
-            Debug.LogError("NavMesh has no vertices! Check NavMeshSurface is assigned and baked.");
-        }
-    }
 
     void Update()
     {

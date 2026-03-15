@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class PlayerLook : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class PlayerLook : MonoBehaviour
     public float xSensitivity = 10.0f;
     public float ySensitivity = 20.0f;
     public Slider sensitivitySlider;
+    public TMP_InputField sensitivityInput;
     private float baseSensitivity = 1f;
 
     private float recoilX;
@@ -46,13 +48,37 @@ public class PlayerLook : MonoBehaviour
             sensitivitySlider.minValue = 0.1f;
             sensitivitySlider.maxValue = 3f;
             sensitivitySlider.value = baseSensitivity;
-            sensitivitySlider.onValueChanged.AddListener(OnSensitivityChanged);
+            sensitivitySlider.onValueChanged.AddListener(OnSliderChanged);
+        }
+
+        if (sensitivityInput != null)
+        {
+            sensitivityInput.text = baseSensitivity.ToString("F1");
+            sensitivityInput.onEndEdit.AddListener(OnInputChanged);
         }
     }
 
-    private void OnSensitivityChanged(float value)
+    private void OnSliderChanged(float value)
     {
         baseSensitivity = value;
+        if (sensitivityInput != null)
+            sensitivityInput.text = value.ToString("F1");
+    }
+
+    private void OnInputChanged(string value)
+    {
+        float parsed;
+        if (float.TryParse(value, out parsed))
+        {
+            parsed = Mathf.Clamp(parsed, sensitivitySlider.minValue, sensitivitySlider.maxValue);
+            baseSensitivity = parsed;
+            sensitivitySlider.value = parsed;
+            sensitivityInput.text = parsed.ToString("F1");
+        }
+        else
+        {
+            sensitivityInput.text = baseSensitivity.ToString("F1");
+        }
     }
 
     void Update()
