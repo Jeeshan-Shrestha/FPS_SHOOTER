@@ -95,7 +95,9 @@ public class PlayerShoot : MonoBehaviour
 
         if (Input.GetMouseButtonDown(1) 
             && !settingsMenu.isPanelOpen 
-            && !shopMenu.isPanelOpen)
+            && !shopMenu.isPanelOpen
+            && !gameManager.isCursorVisible
+            )
         {
             playerLook.ToggleScope(gun.scopedFOV);
         }

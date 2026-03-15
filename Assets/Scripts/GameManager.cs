@@ -45,30 +45,6 @@ public class GameManager : MonoBehaviour
     private Coroutine headshotCoroutine;
     public TextMeshProUGUI headshotText;
 
-    public void ShowHeadshotIndicator()
-    {
-        if (headshotCoroutine != null)
-            StopCoroutine(headshotCoroutine);
-        headshotCoroutine = StartCoroutine(FlashHeadshotText());
-    }
-
-    private IEnumerator FlashHeadshotText()
-    {
-        headshotText.text = "HEADSHOT!";
-        headshotText.color = Color.red;
-        yield return new WaitForSeconds(1f);
-        headshotText.text = "";
-    }
-
-    public void PauseGame()
-    {
-        Time.timeScale = 0f;
-    }
-
-    public void ResumeGame()
-    {
-        Time.timeScale = 1f;
-    }
 
     void Start()
     {
@@ -105,6 +81,30 @@ public class GameManager : MonoBehaviour
 
         killCountText.text = "Kills: " + killCount.ToString();
     }
+    public void ShowHeadshotIndicator()
+    {
+        if (headshotCoroutine != null)
+            StopCoroutine(headshotCoroutine);
+        headshotCoroutine = StartCoroutine(FlashHeadshotText());
+    }
+
+    private IEnumerator FlashHeadshotText()
+    {
+        headshotText.text = "HEADSHOT!";
+        headshotText.color = Color.red;
+        yield return new WaitForSeconds(1f);
+        headshotText.text = "";
+    }
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
+    }
 
     public void GameOver()
     {
@@ -115,6 +115,7 @@ public class GameManager : MonoBehaviour
         finalKillCount.text = "Kills: " + killCount.ToString();
         gameOverUI.SetActive(true);
         Time.timeScale = 0f;
+
     }
 
     public void SpawnEnemy()
