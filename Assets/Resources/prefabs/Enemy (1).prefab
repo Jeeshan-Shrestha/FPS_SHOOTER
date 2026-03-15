@@ -178,15 +178,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
   gunShotSound: {fileID: 0}
   muzzleFlash: {fileID: 6691505549565565151}
-  bulletSpread: 0.05
+  bulletSpread: 0.049
   currentState: 
   enemyPath: {fileID: 0}
   sightDistance: 50
   fieldOfView: 80
   gunBarrelTransform: {fileID: 7179149781267753972}
-  fireRate: 0.9
+  fireRate: 0.1
   bulletPrefab: {fileID: 3821790504928499326, guid: f662397aeac958e4bb32eb6d9eb2a364, type: 3}
-  maxAmmo: 10
+  maxAmmo: 20
   reloadTime: 2.5
   reloadSound: {fileID: 0}
 --- !u!195 &7321753221921641967
