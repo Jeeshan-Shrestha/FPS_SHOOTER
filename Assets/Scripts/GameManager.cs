@@ -44,6 +44,8 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        Cursor.visible = isCursorVisible;
+        Cursor.lockState = isCursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
         Time.timeScale = 1f;
         player = GameObject.FindGameObjectWithTag("Player");
         navMeshReady = true;
