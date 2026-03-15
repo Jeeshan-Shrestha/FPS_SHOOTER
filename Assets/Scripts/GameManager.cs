@@ -42,6 +42,24 @@ public class GameManager : MonoBehaviour
     public float minSpawnDistance = 50f;
     public float maxSpawnDistance = 100f;
 
+    private Coroutine headshotCoroutine;
+    public TextMeshProUGUI headshotText;
+
+    public void ShowHeadshotIndicator()
+    {
+        if (headshotCoroutine != null)
+            StopCoroutine(headshotCoroutine);
+        headshotCoroutine = StartCoroutine(FlashHeadshotText());
+    }
+
+    private IEnumerator FlashHeadshotText()
+    {
+        headshotText.text = "HEADSHOT!";
+        headshotText.color = Color.red;
+        yield return new WaitForSeconds(1f);
+        headshotText.text = "";
+    }
+
     void Start()
     {
         Cursor.visible = isCursorVisible;

@@ -22,6 +22,7 @@ public class LoadingScreen : MonoBehaviour
 
     void Start()
     {
+        Time.timeScale = 1f;
         StartCoroutine(LoadSceneAsync("FloodedGround"));
     }
 

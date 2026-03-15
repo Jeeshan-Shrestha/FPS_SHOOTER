@@ -127,7 +127,7 @@ Rigidbody:
   serializedVersion: 5
   m_Mass: 0.02
   m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_AngularDamping: 0
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -139,7 +139,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 0
@@ -156,6 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 635d7b46ec5339041b4cda4889524ea7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SniperBullet
+  damage: 50
 --- !u!1 &5722047413541113486
 GameObject:
   m_ObjectHideFlags: 0

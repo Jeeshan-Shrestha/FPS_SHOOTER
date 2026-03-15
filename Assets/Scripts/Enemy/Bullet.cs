@@ -2,26 +2,31 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    public float damage = 10f;
+
     void Start()
     {
-        Destroy(gameObject,5f);
+        Destroy(gameObject, 5f);
     }
-    public void OnCollisionEnter(Collision collision)
+
+    void OnCollisionEnter(Collision collision)
     {
         Transform hitTransform = collision.gameObject.transform;
 
         if (collision.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Hit Player");
-            hitTransform.GetComponent<PlayerHealthScripts>().TakeDamage(10);
+            hitTransform.GetComponent<PlayerHealthScripts>().TakeDamage(damage);
+        }
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Headshot"))
+        {
+            hitTransform.GetComponent<HeadshotCollider>().TakeHeadshotDamage(damage);
+            Debug.Log("HEADSHOT!");
         }
         else if (collision.gameObject.CompareTag("Enemy"))
         {
-            Debug.Log("Hit Enemy");
-            hitTransform.GetComponent<EnemyHealthScript>().TakeDamage(10);
+            hitTransform.GetComponent<EnemyHealthScript>().TakeDamage(damage);
         }
 
         Destroy(gameObject);
     }
-
 }

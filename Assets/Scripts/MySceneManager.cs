@@ -30,8 +30,4 @@ public class MySceneManager : MonoBehaviour
         SceneManager.LoadScene(0);
     }
 
-    public void RestartGame()
-    {
-        SceneManager.LoadScene(1);
-    }
 }
