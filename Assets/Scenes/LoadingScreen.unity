@@ -291,6 +291,7 @@ MonoBehaviour:
   progressBar: {fileID: 701758202}
   progressText: {fileID: 8703609}
   statusText: {fileID: 1126452313}
+  minimumLoadTime: 3
 --- !u!114 &71759605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -991,7 +992,7 @@ RectTransform:
   m_GameObject: {fileID: 1575440344}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 19.832632, y: 11.3230715, z: 1}
+  m_LocalScale: {x: 41.67102, y: 20.249016, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 71759608}

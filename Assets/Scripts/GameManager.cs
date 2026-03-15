@@ -60,6 +60,16 @@ public class GameManager : MonoBehaviour
         headshotText.text = "";
     }
 
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
+    }
+
     void Start()
     {
         Cursor.visible = isCursorVisible;
