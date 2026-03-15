@@ -80,6 +80,7 @@ public class AttackState : BaseState
     public void Shoot()
 {
     shotTimer = 0;
+    currentAmmo--; 
     enemy.gunShotSound.Play();
     enemy.muzzleFlash.Play();
 

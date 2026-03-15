@@ -15,11 +15,6 @@ public class MySceneManager : MonoBehaviour
         SceneManager.LoadScene(2);
     }
 
-    public void LoadMap1()
-    {
-        SceneManager.LoadScene(1);
-    }
-
     public void LoadMap2()
     {
         SceneManager.LoadScene(2);

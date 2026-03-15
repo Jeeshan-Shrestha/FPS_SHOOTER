@@ -184,9 +184,9 @@ MonoBehaviour:
   sightDistance: 50
   fieldOfView: 80
   gunBarrelTransform: {fileID: 7179149781267753972}
-  fireRate: 0.1
+  fireRate: 0.2
   bulletPrefab: {fileID: 3821790504928499326, guid: f662397aeac958e4bb32eb6d9eb2a364, type: 3}
-  maxAmmo: 20
+  maxAmmo: 10
   reloadTime: 2.5
   reloadSound: {fileID: 0}
 --- !u!195 &7321753221921641967
@@ -223,7 +223,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 3061c7b9b32d894478e4126ccce25ca3, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
