@@ -14,6 +14,10 @@ public class PlayerLook : MonoBehaviour
     public TMP_InputField sensitivityInput;
     private float baseSensitivity = 1f;
 
+    public Slider AdsSensitivitySlider;
+    public TMP_InputField AdsSensitivityInput;
+    private float AdsBaseSensitivity = 0.5f;
+
     private float recoilX;
     private float recoilY;
     private float currentRecoilX;
@@ -51,10 +55,24 @@ public class PlayerLook : MonoBehaviour
             sensitivitySlider.onValueChanged.AddListener(OnSliderChanged);
         }
 
+        if (AdsSensitivitySlider != null)
+        {
+            AdsSensitivitySlider.minValue = 0.1f;
+            AdsSensitivitySlider.maxValue = 1f;
+            AdsSensitivitySlider.value = baseSensitivity;
+            AdsSensitivitySlider.onValueChanged.AddListener(OnAdsSliderChanged);
+        }
+
         if (sensitivityInput != null)
         {
             sensitivityInput.text = baseSensitivity.ToString("F1");
             sensitivityInput.onEndEdit.AddListener(OnInputChanged);
+        }
+
+        if (AdsSensitivityInput != null)
+        {
+            AdsSensitivityInput.text = baseSensitivity.ToString("F1");
+            AdsSensitivityInput.onEndEdit.AddListener(OnAdsInputChanged);
         }
     }
 
@@ -63,6 +81,13 @@ public class PlayerLook : MonoBehaviour
         baseSensitivity = value;
         if (sensitivityInput != null)
             sensitivityInput.text = value.ToString("F1");
+    }
+
+    private void OnAdsSliderChanged(float value)
+    {
+        AdsBaseSensitivity = value;
+        if (AdsSensitivityInput != null)
+            AdsSensitivityInput.text = value.ToString("F1");
     }
 
     private void OnInputChanged(string value)
@@ -78,6 +103,22 @@ public class PlayerLook : MonoBehaviour
         else
         {
             sensitivityInput.text = baseSensitivity.ToString("F1");
+        }
+    }
+
+    private void OnAdsInputChanged(string value)
+    {
+        float parsed;
+        if (float.TryParse(value, out parsed))
+        {
+            parsed = Mathf.Clamp(parsed, AdsSensitivitySlider.minValue, AdsSensitivitySlider.maxValue);
+            AdsBaseSensitivity = parsed;
+            AdsSensitivitySlider.value = parsed;
+            AdsSensitivityInput.text = parsed.ToString("F1");
+        }
+        else
+        {
+            AdsSensitivityInput.text = baseSensitivity.ToString("F1");
         }
     }
 
@@ -110,7 +151,7 @@ public class PlayerLook : MonoBehaviour
     {
         if (gameManager.isCursorVisible) return;
 
-        float sensMultiplier = (isScoped ? 0.15f : 1f) * baseSensitivity;
+        float sensMultiplier = (isScoped ? AdsBaseSensitivity : 1f) * baseSensitivity;
 
         xRotation -= (input.y * Time.deltaTime) * ySensitivity * sensMultiplier;
         xRotation = Mathf.Clamp(xRotation, -80f, 80f);
