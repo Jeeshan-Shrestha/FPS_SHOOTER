@@ -4,7 +4,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
 using System.Collections;
-using UnityEditor.Analytics;
 
 public class GameManager : MonoBehaviour
 {
@@ -20,11 +19,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject sniperEnemyPrefab;
     [SerializeField] private GameObject pathPrefab;
 
-    private Vector3 mapCenter;
     private bool navMeshReady = false;
-
-    private float enemySpawnCooldown = 10f;
-    private float enemySpawnTimer;
 
     public GameObject gameOverUI;
     public bool isCursorVisible = false;
@@ -39,48 +34,27 @@ public class GameManager : MonoBehaviour
     private GameObject player;
 
     [Header("Spawn Settings")]
-    public float minSpawnDistance = 50f;
-    public float maxSpawnDistance = 100f;
+    public float minSpawnDistance = 10f;
+    public float maxSpawnDistance = 30f;
 
     private Coroutine headshotCoroutine;
     public TextMeshProUGUI headshotText;
 
+    [Header("Wave Settings")]
+    public int currentWave = 0;
+    public int enemiesPerWave = 5;
+    public float waveDuration = 60f;
+    private float waveTimer = 0f;
+    private int enemiesSpawnedThisWave = 0;
+    private float enemySpawnInterval = 3f;
+    private float enemySpawnTimer = 0f;
+    private bool waveActive = false;
 
-    void Start()
-    {
-        Cursor.visible = isCursorVisible;
-        Cursor.lockState = isCursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
-        Time.timeScale = 1f;
-        player = GameObject.FindGameObjectWithTag("Player");
-        navMeshReady = true;
-    }
+    public TextMeshProUGUI waveText;
+    public TextMeshProUGUI waveTimerText;
+    public GameObject waveAnnouncerUI;
+    public TextMeshProUGUI waveAnnouncerText;
 
-
-    void Update()
-    {
-        score += Time.deltaTime * scoreMultiplier;
-        enemySpawnTimer += Time.deltaTime;
-        if (enemySpawnTimer > enemySpawnCooldown && navMeshReady)
-            SpawnEnemy();
-
-        if (timerSecond > 60)
-        {
-            timerMinute += 1;
-            timerSecond = 0;
-        }
-        timerSecond += Time.deltaTime;
-        timerText.text = "Time: " + timerMinute.ToString() + ":" + ((int)timerSecond).ToString();
-        scoreText.text = "Score: " + ((int)score).ToString();
-
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            isCursorVisible = !isCursorVisible;
-            Cursor.visible = isCursorVisible;
-            Cursor.lockState = isCursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
-        }
-
-        killCountText.text = "Kills: " + killCount.ToString();
-    }
     public void ShowHeadshotIndicator()
     {
         if (headshotCoroutine != null)
@@ -96,14 +70,91 @@ public class GameManager : MonoBehaviour
         headshotText.text = "";
     }
 
-    public void PauseGame()
+    void Start()
     {
-        Time.timeScale = 0f;
+        Cursor.visible = isCursorVisible;
+        Cursor.lockState = isCursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
+        Time.timeScale = 1f;
+        player = GameObject.FindGameObjectWithTag("Player");
+        navMeshReady = true;
+
+        StartCoroutine(StartNextWave());
     }
 
-    public void ResumeGame()
+    void Update()
     {
-        Time.timeScale = 1f;
+        score += Time.deltaTime * scoreMultiplier;
+
+        if (waveActive)
+        {
+            waveTimer -= Time.deltaTime;
+            enemySpawnTimer += Time.deltaTime;
+
+            // spawn enemies evenly throughout wave duration
+            if (enemySpawnTimer >= enemySpawnInterval
+                && enemiesSpawnedThisWave < enemiesPerWave
+                && navMeshReady)
+            {
+                SpawnEnemy();
+                enemiesSpawnedThisWave++;
+                enemySpawnTimer = 0f;
+            }
+
+            // update wave timer UI
+            int seconds = Mathf.CeilToInt(waveTimer);
+            waveTimerText.text = "Wave ends in: " + seconds + "s";
+
+            // wave over when timer runs out
+            if (waveTimer <= 0f)
+            {
+                waveActive = false;
+                StartCoroutine(StartNextWave());
+            }
+        }
+
+        if (timerSecond > 60)
+        {
+            timerMinute += 1;
+            timerSecond = 0;
+        }
+        timerSecond += Time.deltaTime;
+        timerText.text = "Time: " + timerMinute.ToString() + ":" + ((int)timerSecond).ToString();
+        scoreText.text = "Score: " + ((int)score).ToString();
+        waveText.text = "Wave: " + currentWave.ToString();
+
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            isCursorVisible = !isCursorVisible;
+            Cursor.visible = isCursorVisible;
+            Cursor.lockState = isCursorVisible ? CursorLockMode.None : CursorLockMode.Locked;
+        }
+
+        killCountText.text = "Kills: " + killCount.ToString();
+    }
+
+    private IEnumerator StartNextWave()
+    {
+        currentWave++;
+
+        // scale difficulty each wave
+        enemiesPerWave = 5 + (currentWave - 1) * 2; // wave 1 = 5, wave 2 = 7, wave 3 = 9 etc
+        scoreMultiplier = 5 + currentWave * 0.5f;
+        enemySpawnInterval = Mathf.Max(1f, 3f - currentWave * 0.2f); // spawns faster each wave
+
+        // show wave announcer
+        if (waveAnnouncerUI != null)
+        {
+            waveAnnouncerUI.SetActive(true);
+            waveAnnouncerText.text = "WAVE " + currentWave;
+            yield return new WaitForSeconds(2f);
+            waveAnnouncerUI.SetActive(false);
+        }
+
+        // reset wave state
+        enemiesSpawnedThisWave = 0;
+        enemySpawnTimer = 0f;
+        waveTimer = waveDuration;
+        waveActive = true;
     }
 
     public void GameOver()
@@ -115,17 +166,10 @@ public class GameManager : MonoBehaviour
         finalKillCount.text = "Kills: " + killCount.ToString();
         gameOverUI.SetActive(true);
         Time.timeScale = 0f;
-
     }
 
     public void SpawnEnemy()
     {
-        enemySpawnTimer = 0;
-        enemySpawnCooldown -= 0.1f;
-        scoreMultiplier += 0.01f;
-        if (enemySpawnCooldown <= 1)
-            enemySpawnCooldown = 1;
-
         Vector3 spawnPos = GetSpawnPositionNearPlayer();
         if (spawnPos == Vector3.zero) return;
 
@@ -139,6 +183,16 @@ public class GameManager : MonoBehaviour
         enemyScript.enemyPath = enemyPath.GetComponent<EnemyPath>();
     }
 
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
+    }
+
     private Vector3 GetSpawnPositionNearPlayer()
     {
         if (player == null) return Vector3.zero;
@@ -147,7 +201,6 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < 50; i++)
         {
-            // pick a random angle and random distance between min and max
             float angle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
             float distance = Random.Range(minSpawnDistance, maxSpawnDistance);
 
@@ -157,23 +210,19 @@ public class GameManager : MonoBehaviour
                 playerPos.z + Mathf.Sin(angle) * distance
             );
 
-            // raycast down to find ground surface
             RaycastHit groundHit;
             if (!Physics.Raycast(candidatePos, Vector3.down, out groundHit, 200f))
                 continue;
 
             Vector3 groundPos = groundHit.point + Vector3.up * 0.5f;
 
-            // skip if something is above — inside a building
             if (Physics.Raycast(groundPos + Vector3.up * 0.1f, Vector3.up, 5f))
                 continue;
 
-            // verify it lands on navmesh
             NavMeshHit navHit;
             if (!NavMesh.SamplePosition(groundPos, out navHit, 3f, NavMesh.AllAreas))
                 continue;
 
-            // final distance check — make sure it's actually within range
             float actualDistance = Vector3.Distance(navHit.position, playerPos);
             if (actualDistance < minSpawnDistance || actualDistance > maxSpawnDistance)
                 continue;
@@ -181,10 +230,9 @@ public class GameManager : MonoBehaviour
             return navHit.position + Vector3.up * 0.5f;
         }
 
-        // fallback — spawn anywhere valid on navmesh near player
-        Debug.LogWarning("Could not find ideal spawn, using fallback");
         NavMeshHit fallback;
-        if (NavMesh.SamplePosition(playerPos + Vector3.forward * minSpawnDistance, out fallback, 50f, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(playerPos + Vector3.forward * minSpawnDistance,
+            out fallback, 50f, NavMesh.AllAreas))
             return fallback.position + Vector3.up * 0.5f;
 
         return Vector3.zero;

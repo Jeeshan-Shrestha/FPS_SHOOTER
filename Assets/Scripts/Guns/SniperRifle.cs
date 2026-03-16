@@ -4,7 +4,7 @@ public class SniperRifle: BaseGun
 {
     void Start()
     {
-        scopedFOV = 10;
+        scopedFOV = 15;
         bulletVelocity = 300;
         AudioSource[] audioSources = GetComponents<AudioSource>();
         gunShotSound = audioSources[0];

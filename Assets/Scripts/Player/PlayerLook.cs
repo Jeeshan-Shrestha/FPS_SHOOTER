@@ -59,7 +59,7 @@ public class PlayerLook : MonoBehaviour
         {
             AdsSensitivitySlider.minValue = 0.1f;
             AdsSensitivitySlider.maxValue = 1f;
-            AdsSensitivitySlider.value = baseSensitivity;
+            AdsSensitivitySlider.value = AdsBaseSensitivity;
             AdsSensitivitySlider.onValueChanged.AddListener(OnAdsSliderChanged);
         }
 
@@ -151,7 +151,7 @@ public class PlayerLook : MonoBehaviour
     {
         if (gameManager.isCursorVisible) return;
 
-        float sensMultiplier = (isScoped ? AdsBaseSensitivity : 1f) * baseSensitivity;
+        float sensMultiplier = isScoped ? AdsBaseSensitivity : baseSensitivity;
 
         xRotation -= (input.y * Time.deltaTime) * ySensitivity * sensMultiplier;
         xRotation = Mathf.Clamp(xRotation, -80f, 80f);

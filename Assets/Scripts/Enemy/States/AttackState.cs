@@ -11,6 +11,7 @@ public class AttackState : BaseState
     private float reloadTimer;
     private bool isReloading;
 
+
     public override void Enter()
     {
         currentAmmo = enemy.maxAmmo;
@@ -79,6 +80,10 @@ public class AttackState : BaseState
 
     public void Shoot()
 {
+
+    enemy.enemyTopCanvas.SetActive(true);
+    enemy.enemyTopCanvasTimer = 0;
+
     shotTimer = 0;
     currentAmmo--; 
     enemy.gunShotSound.Play();

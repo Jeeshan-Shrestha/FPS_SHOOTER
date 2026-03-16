@@ -37,6 +37,10 @@ public class Enemy : MonoBehaviour
     private AudioSource[] sounds;
     public AudioSource reloadSound;
 
+    public GameObject enemyTopCanvas;
+    public float enemyTopCanvasCooldown = 3f;
+    public float enemyTopCanvasTimer;
+
    void Start()
     {
         agent = GetComponent<NavMeshAgent>();
@@ -58,6 +62,11 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        enemyTopCanvasTimer += Time.deltaTime;
+        if (enemyTopCanvasTimer > enemyTopCanvasCooldown)
+        {
+            enemyTopCanvas.SetActive(false);
+        }
         CanSeePlayer();
         currentState = stateMachine.activeState.ToString();
     }
