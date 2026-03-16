@@ -8,10 +8,13 @@ public class EnemyHealthScript : MonoBehaviour
     public GameManager gameManager;
 
     private Enemy enemy;
-
+    public ShopManager shopManager;
+    public PlayerHealthScripts playerHealthScripts;
     void Start()
     {
         gameManager = FindAnyObjectByType<GameManager>();
+        shopManager = FindAnyObjectByType<ShopManager>();
+        playerHealthScripts = FindAnyObjectByType<PlayerHealthScripts>();
         enemy = GetComponent<Enemy>();
     }
 
@@ -27,6 +30,10 @@ public class EnemyHealthScript : MonoBehaviour
         {
             gameManager.score += 1000;
             gameManager.killCount += 1;
+            if (shopManager.lifeStealUnlocked)
+            {
+                playerHealthScripts.HealHealth(20);
+            }
             Destroy(gameObject);
         }
     }

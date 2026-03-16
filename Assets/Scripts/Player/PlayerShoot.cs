@@ -176,6 +176,5 @@ public class PlayerShoot : MonoBehaviour
 
         isReloading = false;
         reloadCooldownCounter = 0;
-        shotTimer = 0;
     }
 }

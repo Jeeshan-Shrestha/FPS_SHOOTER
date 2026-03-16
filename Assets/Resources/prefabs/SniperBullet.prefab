@@ -156,7 +156,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 635d7b46ec5339041b4cda4889524ea7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SniperBullet
-  damage: 50
+  damage: 80
   customGravity: 0.5
 --- !u!1 &5722047413541113486
 GameObject:
